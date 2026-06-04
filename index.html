@@ -1,532 +1,662 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your Name — Developer</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>NOVA — 시작 페이지</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Noto+Sans+KR:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080c10;
+  --surface:#0f1419;
+  --surface2:#161d26;
+  --border:rgba(255,255,255,0.07);
+  --border2:rgba(255,255,255,0.12);
+  --fg:#e8edf2;
+  --muted:#6b7a8d;
+  --accent:#4f9cf9;
+  --accent2:#7dd3fc;
+  --green:#34d399;
+  --amber:#fbbf24;
+  --red:#f87171;
+  --sans:'Noto Sans KR',sans-serif;
+  --display:'Syne',sans-serif;
+}
+html{height:100%}
+body{
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--sans);
+  min-height:100vh;
+  font-size:14px;
+  line-height:1.6;
+  position:relative;
+  overflow-x:hidden;
+}
 
-    :root {
-      --bg: #0e0e0e;
-      --fg: #f0ece4;
-      --muted: #888880;
-      --accent: #c8f060;
-      --border: rgba(240,236,228,0.10);
-      --serif: 'DM Serif Display', Georgia, serif;
-      --mono: 'DM Mono', 'Courier New', monospace;
-    }
+/* bg grid */
+body::before{
+  content:'';
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(79,156,249,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(79,156,249,0.03) 1px,transparent 1px);
+  background-size:48px 48px;
+  pointer-events:none;
+  z-index:0;
+}
 
-    html { scroll-behavior: smooth; }
+/* glow orb */
+body::after{
+  content:'';
+  position:fixed;
+  width:600px;height:600px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(79,156,249,0.06) 0%,transparent 70%);
+  top:-100px;left:50%;
+  transform:translateX(-50%);
+  pointer-events:none;
+  z-index:0;
+}
 
-    body {
-      background: var(--bg);
-      color: var(--fg);
-      font-family: var(--mono);
-      font-size: 14px;
-      line-height: 1.8;
-      min-height: 100vh;
-    }
+.page{position:relative;z-index:1;max-width:900px;margin:0 auto;padding:2rem 1.5rem 4rem}
 
-    /* cursor */
-    body { cursor: none; }
-    #cursor {
-      width: 10px; height: 10px;
-      background: var(--accent);
-      border-radius: 50%;
-      position: fixed; top: 0; left: 0;
-      pointer-events: none;
-      z-index: 9999;
-      transition: transform 0.15s ease;
-    }
-    #cursor.expand { transform: scale(4); opacity: 0.3; }
+/* ── HEADER ── */
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:3rem;
+  padding-bottom:1.5rem;
+  border-bottom:1px solid var(--border);
+}
+.logo{
+  font-family:var(--display);
+  font-size:1.4rem;
+  font-weight:800;
+  letter-spacing:0.1em;
+  color:var(--fg);
+  text-decoration:none;
+}
+.logo span{color:var(--accent)}
+.header-right{display:flex;align-items:center;gap:1.5rem}
+.nav-pill{
+  font-size:11px;
+  letter-spacing:0.06em;
+  color:var(--muted);
+  text-decoration:none;
+  transition:color 0.2s;
+  text-transform:uppercase;
+}
+.nav-pill:hover{color:var(--fg)}
 
-    /* layout */
-    .container {
-      max-width: 740px;
-      margin: 0 auto;
-      padding: 0 2rem;
-    }
+/* ── CLOCK / DATE ── */
+.hero{
+  text-align:center;
+  padding:2.5rem 0 3rem;
+}
+#clock{
+  font-family:var(--display);
+  font-size:clamp(3.5rem,10vw,6rem);
+  font-weight:700;
+  letter-spacing:-0.02em;
+  color:var(--fg);
+  line-height:1;
+  opacity:0;
+  animation:fadeUp 0.6s 0.1s forwards;
+}
+#clock .colon{
+  color:var(--accent);
+  animation:blink 1s step-end infinite;
+}
+#date-str{
+  margin-top:0.6rem;
+  font-size:13px;
+  color:var(--muted);
+  letter-spacing:0.08em;
+  opacity:0;
+  animation:fadeUp 0.6s 0.25s forwards;
+}
 
-    /* nav */
-    nav {
-      position: fixed; top: 0; left: 0; right: 0;
-      z-index: 100;
-      padding: 1.5rem 0;
-      border-bottom: 1px solid transparent;
-      transition: border-color 0.3s, backdrop-filter 0.3s;
-    }
-    nav.scrolled {
-      border-color: var(--border);
-      backdrop-filter: blur(12px);
-      background: rgba(14,14,14,0.7);
-    }
-    nav .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .nav-logo {
-      font-family: var(--serif);
-      font-size: 1.1rem;
-      color: var(--fg);
-      text-decoration: none;
-      letter-spacing: 0.01em;
-    }
-    .nav-links { display: flex; gap: 2rem; list-style: none; }
-    .nav-links a {
-      color: var(--muted);
-      text-decoration: none;
-      font-size: 12px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      transition: color 0.2s;
-    }
-    .nav-links a:hover { color: var(--fg); }
+/* ── SEARCH ── */
+.search-wrap{
+  margin:2rem auto 0;
+  max-width:560px;
+  opacity:0;
+  animation:fadeUp 0.6s 0.4s forwards;
+}
+.search-box{
+  display:flex;
+  align-items:center;
+  background:var(--surface);
+  border:1px solid var(--border2);
+  border-radius:40px;
+  padding:0.5rem 0.5rem 0.5rem 1.4rem;
+  gap:0.8rem;
+  transition:border-color 0.2s,box-shadow 0.2s;
+}
+.search-box:focus-within{
+  border-color:var(--accent);
+  box-shadow:0 0 0 3px rgba(79,156,249,0.12);
+}
+.search-box svg{width:16px;height:16px;stroke:var(--muted);flex-shrink:0}
+#search-input{
+  flex:1;
+  background:none;
+  border:none;
+  outline:none;
+  color:var(--fg);
+  font-family:var(--sans);
+  font-size:14px;
+}
+#search-input::placeholder{color:var(--muted)}
+.search-btn{
+  background:var(--accent);
+  border:none;
+  border-radius:30px;
+  padding:0.5rem 1.2rem;
+  color:#fff;
+  font-family:var(--sans);
+  font-size:13px;
+  font-weight:500;
+  cursor:pointer;
+  transition:background 0.2s,transform 0.1s;
+  white-space:nowrap;
+}
+.search-btn:hover{background:var(--accent2);color:#0a1628}
+.search-btn:active{transform:scale(0.97)}
+.search-engines{
+  display:flex;
+  justify-content:center;
+  gap:1rem;
+  margin-top:0.8rem;
+}
+.eng-btn{
+  font-size:11px;
+  color:var(--muted);
+  background:none;
+  border:none;
+  cursor:pointer;
+  padding:0.2rem 0.6rem;
+  border-radius:20px;
+  transition:background 0.2s,color 0.2s;
+  font-family:var(--sans);
+}
+.eng-btn:hover,.eng-btn.active{background:var(--surface2);color:var(--fg)}
+.eng-btn.active{color:var(--accent)}
 
-    /* hero */
-    #hero {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      padding-top: 80px;
-    }
-    .hero-inner { padding: 4rem 0; }
-    .hero-tag {
-      display: inline-block;
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 2rem;
-      opacity: 0;
-      animation: fadeUp 0.6s 0.2s forwards;
-    }
-    .hero-name {
-      font-family: var(--serif);
-      font-size: clamp(3rem, 9vw, 6rem);
-      line-height: 1.0;
-      letter-spacing: -0.02em;
-      margin-bottom: 1.5rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.35s forwards;
-    }
-    .hero-name em { font-style: italic; color: var(--muted); }
-    .hero-desc {
-      max-width: 480px;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.9;
-      margin-bottom: 2.5rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.5s forwards;
-    }
-    .hero-cta {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.6rem;
-      padding: 0.7rem 1.4rem;
-      border: 1px solid var(--border);
-      color: var(--fg);
-      text-decoration: none;
-      font-size: 12px;
-      letter-spacing: 0.06em;
-      transition: border-color 0.2s, background 0.2s;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.65s forwards;
-    }
-    .hero-cta:hover {
-      border-color: var(--accent);
-      background: rgba(200,240,96,0.06);
-    }
-    .hero-cta .arrow { color: var(--accent); }
-    .hero-scroll {
-      margin-top: 5rem;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      opacity: 0;
-      animation: fadeUp 0.7s 0.9s forwards;
-    }
-    .hero-scroll span { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; }
-    .scroll-line {
-      width: 60px; height: 1px;
-      background: var(--muted);
-      position: relative;
-      overflow: hidden;
-    }
-    .scroll-line::after {
-      content: '';
-      position: absolute; top: 0; left: -100%;
-      width: 100%; height: 100%;
-      background: var(--accent);
-      animation: scrollSlide 2s 1.2s ease infinite;
-    }
+/* ── GRID ── */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 300px;
+  gap:1.5rem;
+  margin-top:2rem;
+}
+@media(max-width:680px){
+  .grid{grid-template-columns:1fr}
+}
 
-    /* section */
-    section { padding: 6rem 0; }
-    .section-label {
-      font-size: 11px;
-      letter-spacing: 0.14em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 2.5rem;
-    }
-    .section-title {
-      font-family: var(--serif);
-      font-size: clamp(1.8rem, 4vw, 2.8rem);
-      line-height: 1.15;
-      margin-bottom: 1.5rem;
-    }
+/* ── CARD ── */
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:1.4rem;
+  opacity:0;
+  animation:fadeUp 0.6s forwards;
+}
+.card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:1rem;
+}
+.card-title{
+  font-family:var(--display);
+  font-size:12px;
+  font-weight:600;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+.card-more{font-size:11px;color:var(--muted);text-decoration:none;transition:color 0.2s}
+.card-more:hover{color:var(--accent)}
 
-    /* about */
-    #about .about-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 4rem;
-      align-items: start;
-    }
-    .about-text { color: var(--muted); font-size: 13px; line-height: 1.9; }
-    .about-text p + p { margin-top: 1rem; }
-    .stats { display: flex; flex-direction: column; gap: 1.5rem; }
-    .stat {
-      padding: 1.2rem 0;
-      border-top: 1px solid var(--border);
-    }
-    .stat-num {
-      font-family: var(--serif);
-      font-size: 2.5rem;
-      line-height: 1;
-      color: var(--fg);
-    }
-    .stat-num span { color: var(--accent); }
-    .stat-label { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; margin-top: 0.3rem; }
+/* weather */
+.weather-main{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:1.2rem;
+}
+.weather-icon{font-size:3rem;line-height:1}
+.weather-right{text-align:right}
+.weather-temp{
+  font-family:var(--display);
+  font-size:2.5rem;
+  font-weight:700;
+  line-height:1;
+  color:var(--fg);
+}
+.weather-desc{font-size:12px;color:var(--muted);margin-top:0.2rem}
+.weather-loc{font-size:11px;color:var(--muted);margin-top:0.1rem;letter-spacing:0.04em}
+.weather-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0.6rem;
+}
+.weather-stat{
+  background:var(--surface2);
+  border-radius:8px;
+  padding:0.6rem 0.8rem;
+}
+.weather-stat-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em}
+.weather-stat-val{font-size:14px;font-weight:500;color:var(--fg);margin-top:0.1rem}
+.weather-note{font-size:11px;color:var(--muted);margin-top:0.8rem;text-align:center}
 
-    /* skills */
-    #skills { border-top: 1px solid var(--border); }
-    .skills-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-      gap: 1px;
-      border: 1px solid var(--border);
-      margin-top: 2.5rem;
-    }
-    .skill-item {
-      padding: 1.2rem 1.4rem;
-      border: 1px solid var(--border);
-      font-size: 12px;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: 0.6rem;
-      transition: background 0.2s, color 0.2s;
-    }
-    .skill-item:hover { background: rgba(200,240,96,0.05); color: var(--fg); }
-    .skill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); flex-shrink: 0; }
+/* quick links */
+.links-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:0.6rem;
+}
+.qlink{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:0.5rem;
+  padding:0.8rem 0.4rem;
+  background:var(--surface2);
+  border-radius:10px;
+  text-decoration:none;
+  color:var(--muted);
+  font-size:11px;
+  transition:background 0.2s,color 0.2s,transform 0.15s;
+  text-align:center;
+  border:1px solid transparent;
+}
+.qlink:hover{
+  background:var(--surface);
+  border-color:var(--border2);
+  color:var(--fg);
+  transform:translateY(-2px);
+}
+.qlink-icon{
+  width:32px;height:32px;
+  border-radius:8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:16px;
+}
 
-    /* projects */
-    #projects { border-top: 1px solid var(--border); }
-    .projects-list { margin-top: 2.5rem; }
-    .project-item {
-      display: grid;
-      grid-template-columns: 3rem 1fr auto;
-      gap: 1.5rem;
-      align-items: start;
-      padding: 1.8rem 0;
-      border-top: 1px solid var(--border);
-      text-decoration: none;
-      color: inherit;
-      transition: opacity 0.2s;
-    }
-    .project-item:hover { opacity: 0.75; }
-    .project-num { font-size: 11px; color: var(--muted); padding-top: 0.3rem; }
-    .project-name {
-      font-family: var(--serif);
-      font-size: 1.3rem;
-      line-height: 1.3;
-      margin-bottom: 0.4rem;
-    }
-    .project-desc { font-size: 12px; color: var(--muted); }
-    .project-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.7rem; }
-    .tag {
-      font-size: 10px;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      padding: 0.2rem 0.6rem;
-      border: 1px solid var(--border);
-      color: var(--muted);
-    }
-    .project-arrow { color: var(--muted); font-size: 1.2rem; padding-top: 0.3rem; transition: transform 0.2s, color 0.2s; }
-    .project-item:hover .project-arrow { transform: translate(3px,-3px); color: var(--accent); }
+/* news */
+.news-list{display:flex;flex-direction:column;gap:0}
+.news-item{
+  padding:0.8rem 0;
+  border-bottom:1px solid var(--border);
+  display:flex;
+  align-items:flex-start;
+  gap:0.8rem;
+}
+.news-item:last-child{border-bottom:none;padding-bottom:0}
+.news-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);
+  flex-shrink:0;margin-top:0.45rem;
+}
+.news-text{
+  font-size:13px;
+  color:var(--fg);
+  line-height:1.5;
+  text-decoration:none;
+  display:block;
+  transition:color 0.2s;
+}
+.news-text:hover{color:var(--accent)}
+.news-time{font-size:11px;color:var(--muted);margin-top:0.15rem}
+.news-badge{
+  font-size:10px;
+  padding:0.1rem 0.5rem;
+  border-radius:20px;
+  background:rgba(79,156,249,0.15);
+  color:var(--accent);
+  margin-left:0.4rem;
+  vertical-align:middle;
+}
 
-    /* contact */
-    #contact {
-      border-top: 1px solid var(--border);
-      text-align: center;
-      padding: 7rem 0;
-    }
-    #contact .section-label { justify-content: center; }
-    .contact-title {
-      font-family: var(--serif);
-      font-size: clamp(2.5rem, 6vw, 4.5rem);
-      line-height: 1.1;
-      margin-bottom: 1.5rem;
-    }
-    .contact-title em { font-style: italic; color: var(--muted); }
-    .contact-sub { color: var(--muted); font-size: 13px; margin-bottom: 2.5rem; }
-    .contact-email {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.8rem;
-      font-family: var(--serif);
-      font-size: 1.4rem;
-      color: var(--fg);
-      text-decoration: none;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 0.3rem;
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .contact-email:hover { border-color: var(--accent); color: var(--accent); }
-    .social-links { display: flex; justify-content: center; gap: 2rem; margin-top: 3rem; }
-    .social-links a {
-      font-size: 11px;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: var(--muted);
-      text-decoration: none;
-      transition: color 0.2s;
-    }
-    .social-links a:hover { color: var(--fg); }
+/* animation delays */
+.card:nth-child(1){animation-delay:0.5s}
+.card:nth-child(2){animation-delay:0.6s}
+.card:nth-child(3){animation-delay:0.65s}
+.card:nth-child(4){animation-delay:0.7s}
 
-    /* footer */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 0;
-    }
-    footer .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    footer span { font-size: 11px; color: var(--muted); }
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(16px)}
+  to{opacity:1;transform:none}
+}
+@keyframes blink{
+  0%,100%{opacity:1}
+  50%{opacity:0.2}
+}
 
-    /* animations */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes scrollSlide {
-      0%   { left: -100%; }
-      50%  { left: 100%; }
-      100% { left: 100%; }
-    }
+/* status bar */
+.status-bar{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  margin-bottom:2rem;
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:0.04em;
+}
+.status-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--green);
+  display:inline-block;
+  margin-right:0.3rem;
+  box-shadow:0 0 6px var(--green);
+}
 
-    /* fade-in on scroll */
-    .reveal {
-      opacity: 0;
-      transform: translateY(24px);
-      transition: opacity 0.7s ease, transform 0.7s ease;
-    }
-    .reveal.visible { opacity: 1; transform: none; }
-
-    /* responsive */
-    @media (max-width: 600px) {
-      #about .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
-      .project-item { grid-template-columns: 2rem 1fr auto; gap: 1rem; }
-      .nav-links { display: none; }
-    }
-  </style>
+/* footer */
+footer{
+  margin-top:3rem;
+  padding-top:1.5rem;
+  border-top:1px solid var(--border);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-size:11px;
+  color:var(--muted);
+}
+</style>
 </head>
 <body>
+<div class="page">
 
-<div id="cursor"></div>
+  <header>
+    <a href="#" class="logo">NO<span>V</span>A</a>
+    <div class="header-right">
+      <a href="#" class="nav-pill">설정</a>
+      <a href="#" class="nav-pill">북마크</a>
+    </div>
+  </header>
 
-<nav id="nav">
-  <div class="container">
-    <a href="#" class="nav-logo">YN.</a>
-    <ul class="nav-links">
-      <li><a href="#about">About</a></li>
-      <li><a href="#skills">Skills</a></li>
-      <li><a href="#projects">Work</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
+  <div class="status-bar">
+    <span><span class="status-dot"></span>서버 정상</span>
+    <span>·</span>
+    <span id="uptime">가동 중</span>
   </div>
-</nav>
 
-<main>
-  <!-- HERO -->
-  <section id="hero">
-    <div class="container">
-      <div class="hero-inner">
-        <span class="hero-tag">Available for work</span>
-        <h1 class="hero-name">Your<br><em>Name</em></h1>
-        <p class="hero-desc">
-          풀스택 개발자 · 리눅스 서버 엔지니어.<br>
-          깔끔한 코드와 안정적인 인프라를 추구합니다.
-        </p>
-        <a href="#projects" class="hero-cta">
-          프로젝트 보기 <span class="arrow">↓</span>
-        </a>
-        <div class="hero-scroll">
-          <span>Scroll</span>
-          <div class="scroll-line"></div>
-        </div>
+  <!-- CLOCK -->
+  <div class="hero">
+    <div id="clock"><span id="hh">00</span><span class="colon">:</span><span id="mm">00</span><span class="colon">:</span><span id="ss">00</span></div>
+    <div id="date-str">로딩 중...</div>
+
+    <!-- SEARCH -->
+    <div class="search-wrap">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input id="search-input" type="text" placeholder="검색어를 입력하세요..." autocomplete="off"/>
+        <button class="search-btn" onclick="doSearch()">검색</button>
+      </div>
+      <div class="search-engines">
+        <button class="eng-btn active" data-engine="google" onclick="setEngine(this)">Google</button>
+        <button class="eng-btn" data-engine="naver" onclick="setEngine(this)">Naver</button>
+        <button class="eng-btn" data-engine="youtube" onclick="setEngine(this)">YouTube</button>
+        <button class="eng-btn" data-engine="github" onclick="setEngine(this)">GitHub</button>
       </div>
     </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section id="about">
-    <div class="container">
-      <p class="section-label reveal">About</p>
-      <div class="about-grid">
-        <div>
-          <h2 class="section-title reveal">개발자이자<br>문제 해결사.</h2>
-          <div class="about-text reveal">
-            <p>서버 구축부터 웹 개발까지, 기술 스택 전반을 다룹니다. 복잡한 문제를 단순하게 만드는 것을 즐깁니다.</p>
-            <p>Ubuntu 환경에서 SSH 서버를 직접 운영하며, 안정적이고 보안이 강화된 인프라를 구성합니다.</p>
-          </div>
-        </div>
-        <div class="stats reveal">
-          <div class="stat">
-            <div class="stat-num">3<span>+</span></div>
-            <div class="stat-label">Years of experience</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num">12<span>+</span></div>
-            <div class="stat-label">Projects completed</div>
-          </div>
-          <div class="stat">
-            <div class="stat-num">∞</div>
-            <div class="stat-label">Lines of code</div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SKILLS -->
-  <section id="skills">
-    <div class="container">
-      <p class="section-label reveal">Skills</p>
-      <h2 class="section-title reveal">사용하는 기술들.</h2>
-      <div class="skills-grid reveal">
-        <div class="skill-item"><span class="skill-dot"></span>Linux / Ubuntu</div>
-        <div class="skill-item"><span class="skill-dot"></span>SSH / OpenSSH</div>
-        <div class="skill-item"><span class="skill-dot"></span>Bash Scripting</div>
-        <div class="skill-item"><span class="skill-dot"></span>Nginx / Apache</div>
-        <div class="skill-item"><span class="skill-dot"></span>Docker</div>
-        <div class="skill-item"><span class="skill-dot"></span>Python</div>
-        <div class="skill-item"><span class="skill-dot"></span>JavaScript</div>
-        <div class="skill-item"><span class="skill-dot"></span>HTML / CSS</div>
-        <div class="skill-item"><span class="skill-dot"></span>Git / GitHub</div>
-        <div class="skill-item"><span class="skill-dot"></span>UFW / iptables</div>
-        <div class="skill-item"><span class="skill-dot"></span>MySQL / SQLite</div>
-        <div class="skill-item"><span class="skill-dot"></span>Node.js</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- PROJECTS -->
-  <section id="projects">
-    <div class="container">
-      <p class="section-label reveal">Work</p>
-      <h2 class="section-title reveal">최근 프로젝트.</h2>
-      <div class="projects-list">
-
-        <a href="#" class="project-item reveal">
-          <span class="project-num">01</span>
-          <div>
-            <div class="project-name">SSH 원격 서버 구축</div>
-            <div class="project-desc">Ubuntu 서버에 OpenSSH 설치 및 보안 설정, 키 인증 방식으로 원격 접속 환경 구성.</div>
-            <div class="project-tags">
-              <span class="tag">Linux</span>
-              <span class="tag">SSH</span>
-              <span class="tag">Security</span>
-            </div>
-          </div>
-          <span class="project-arrow">↗</span>
-        </a>
-
-        <a href="#" class="project-item reveal">
-          <span class="project-num">02</span>
-          <div>
-            <div class="project-name">Personal Portfolio</div>
-            <div class="project-desc">미니멀한 디자인의 개인 포트폴리오 사이트. 바닐라 HTML/CSS/JS로 제작.</div>
-            <div class="project-tags">
-              <span class="tag">HTML</span>
-              <span class="tag">CSS</span>
-              <span class="tag">Design</span>
-            </div>
-          </div>
-          <span class="project-arrow">↗</span>
-        </a>
-
-        <a href="#" class="project-item reveal">
-          <span class="project-num">03</span>
-          <div>
-            <div class="project-name">Bash Automation Scripts</div>
-            <div class="project-desc">서버 유지보수 자동화를 위한 쉘 스크립트 모음. 백업, 모니터링, 업데이트 등.</div>
-            <div class="project-tags">
-              <span class="tag">Bash</span>
-              <span class="tag">Automation</span>
-              <span class="tag">DevOps</span>
-            </div>
-          </div>
-          <span class="project-arrow">↗</span>
-        </a>
-
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section id="contact">
-    <div class="container">
-      <p class="section-label reveal">Contact</p>
-      <h2 class="contact-title reveal">함께 만들어<br><em>볼까요?</em></h2>
-      <p class="contact-sub reveal">새로운 기회와 협업을 언제나 환영합니다.</p>
-      <a href="mailto:hello@yourname.dev" class="contact-email reveal">
-        hello@yourname.dev ↗
-      </a>
-      <div class="social-links reveal">
-        <a href="#">GitHub</a>
-        <a href="#">LinkedIn</a>
-        <a href="#">Twitter</a>
-      </div>
-    </div>
-  </section>
-</main>
-
-<footer>
-  <div class="container">
-    <span>© 2026 Your Name</span>
-    <span>Busan, Korea</span>
   </div>
-</footer>
+
+  <!-- MAIN GRID -->
+  <div class="grid">
+
+    <!-- LEFT COL -->
+    <div style="display:flex;flex-direction:column;gap:1.5rem">
+
+      <!-- Quick Links -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">빠른 링크</span>
+          <a href="#" class="card-more">편집</a>
+        </div>
+        <div class="links-grid">
+          <a href="https://github.com" target="_blank" class="qlink">
+            <div class="qlink-icon" style="background:rgba(255,255,255,0.05)">🐙</div>
+            <span>GitHub</span>
+          </a>
+          <a href="https://youtube.com" target="_blank" class="qlink">
+            <div class="qlink-icon" style="background:rgba(248,113,113,0.1)">▶</div>
+            <span>YouTube</span>
+          </a>
+          <a href="https://mail.google.com" target="_blank" class="qlink">
+            <div class="qlink-icon" style="background:rgba(251,191,36,0.1)">✉</div>
+            <span>Gmail</span>
+          </a>
+          <a href="https://notion.so" target="_blank" class="qlink">
+            <div class="qlink-icon" style="background:rgba(255,255,255,0.05)">📝</div>
+            <span>Notion</span>
+          </a>
+          <a href="https://x.com" target="_blank" class="qlink">
+            <div class="qlink-icon" style="background:rgba(255,255,255,0.05)">✕</div>
+            <span>X</span>
+          </a>
+          <a href="https://reddit.com" target="_blank" class="qlink">
+            <div class="qlink-icon" style="background:rgba(248,113,113,0.1)">🔴</div>
+            <span>Reddit</span>
+          </a>
+          <a href="https://naver.com" target="_blank" class="qlink">
+            <div class="qlink-icon" style="background:rgba(52,211,153,0.1)">N</div>
+            <span>Naver</span>
+          </a>
+          <a href="https://chat.openai.com" target="_blank" class="qlink">
+            <div class="qlink-icon" style="background:rgba(79,156,249,0.1)">🤖</div>
+            <span>ChatGPT</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- News -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">헤드라인</span>
+          <a href="https://news.naver.com" target="_blank" class="card-more">더보기 →</a>
+        </div>
+        <div class="news-list" id="news-list">
+          <div class="news-item">
+            <div class="news-dot" style="background:var(--amber)"></div>
+            <div>
+              <a href="https://news.naver.com" target="_blank" class="news-text">최신 뉴스를 보려면 Naver 뉴스를 방문하세요 <span class="news-badge">IT</span></a>
+              <div class="news-time">방금 전</div>
+            </div>
+          </div>
+          <div class="news-item">
+            <div class="news-dot"></div>
+            <div>
+              <a href="https://news.naver.com" target="_blank" class="news-text">기술, 경제, 사회 뉴스 한눈에 확인</a>
+              <div class="news-time">1분 전</div>
+            </div>
+          </div>
+          <div class="news-item">
+            <div class="news-dot" style="background:var(--green)"></div>
+            <div>
+              <a href="https://news.naver.com" target="_blank" class="news-text">개발자를 위한 기술 소식 모아보기 <span class="news-badge">Tech</span></a>
+              <div class="news-time">5분 전</div>
+            </div>
+          </div>
+          <div class="news-item">
+            <div class="news-dot"></div>
+            <div>
+              <a href="https://news.naver.com" target="_blank" class="news-text">오늘의 주요 이슈 확인하기</a>
+              <div class="news-time">10분 전</div>
+            </div>
+          </div>
+          <div class="news-item">
+            <div class="news-dot" style="background:var(--red)"></div>
+            <div>
+              <a href="https://news.naver.com" target="_blank" class="news-text">글로벌 시장 동향 및 환율 정보</a>
+              <div class="news-time">15분 전</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COL -->
+    <div style="display:flex;flex-direction:column;gap:1.5rem">
+
+      <!-- Weather -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">날씨</span>
+          <span style="font-size:11px;color:var(--muted)" id="weather-updated">부산</span>
+        </div>
+        <div class="weather-main">
+          <div class="weather-icon" id="w-icon">⛅</div>
+          <div class="weather-right">
+            <div class="weather-temp" id="w-temp">--°</div>
+            <div class="weather-desc" id="w-desc">날씨 정보 로딩 중</div>
+            <div class="weather-loc">📍 부산, 대한민국</div>
+          </div>
+        </div>
+        <div class="weather-grid">
+          <div class="weather-stat">
+            <div class="weather-stat-label">체감</div>
+            <div class="weather-stat-val" id="w-feel">--°</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">습도</div>
+            <div class="weather-stat-val" id="w-humid">--%</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">바람</div>
+            <div class="weather-stat-val" id="w-wind">-- m/s</div>
+          </div>
+          <div class="weather-stat">
+            <div class="weather-stat-label">가시거리</div>
+            <div class="weather-stat-val" id="w-vis">-- km</div>
+          </div>
+        </div>
+        <div class="weather-note" id="w-note">날씨 정보를 불러오는 중입니다...</div>
+      </div>
+
+      <!-- Mini calendar -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title" id="cal-title">2026년 6월</span>
+        </div>
+        <table style="width:100%;border-collapse:collapse;font-size:12px;text-align:center" id="cal-table">
+        </table>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <span>NOVA Portal · 부산</span>
+    <span id="footer-time">--:--</span>
+  </footer>
+</div>
 
 <script>
-  const cursor = document.getElementById('cursor');
-  document.addEventListener('mousemove', e => {
-    cursor.style.left = e.clientX - 5 + 'px';
-    cursor.style.top  = e.clientY - 5 + 'px';
-  });
-  document.querySelectorAll('a, button').forEach(el => {
-    el.addEventListener('mouseenter', () => cursor.classList.add('expand'));
-    el.addEventListener('mouseleave', () => cursor.classList.remove('expand'));
-  });
+// ── CLOCK ──
+function pad(n){return String(n).padStart(2,'0')}
+const DAYS=['일','월','화','수','목','금','토'];
+const MONTHS=['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
+function tickClock(){
+  const now=new Date();
+  document.getElementById('hh').textContent=pad(now.getHours());
+  document.getElementById('mm').textContent=pad(now.getMinutes());
+  document.getElementById('ss').textContent=pad(now.getSeconds());
+  document.getElementById('date-str').textContent=
+    `${now.getFullYear()}년 ${MONTHS[now.getMonth()]} ${now.getDate()}일 (${DAYS[now.getDay()]})`;
+  document.getElementById('footer-time').textContent=
+    `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+}
+tickClock();setInterval(tickClock,1000);
 
-  window.addEventListener('scroll', () => {
-    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 40);
-  });
+// uptime mock
+const start=Date.now();
+setInterval(()=>{
+  const s=Math.floor((Date.now()-start)/1000);
+  const m=Math.floor(s/60),sec=s%60;
+  document.getElementById('uptime').textContent=`가동 ${m}분 ${sec}초`;
+},1000);
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+// ── SEARCH ──
+let currentEngine='google';
+const engines={
+  google:'https://www.google.com/search?q=',
+  naver:'https://search.naver.com/search.naver?query=',
+  youtube:'https://www.youtube.com/results?search_query=',
+  github:'https://github.com/search?q='
+};
+function setEngine(btn){
+  document.querySelectorAll('.eng-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentEngine=btn.dataset.engine;
+}
+function doSearch(){
+  const q=document.getElementById('search-input').value.trim();
+  if(q) window.open(engines[currentEngine]+encodeURIComponent(q),'_blank');
+}
+document.getElementById('search-input').addEventListener('keydown',e=>{
+  if(e.key==='Enter') doSearch();
+});
+
+// ── WEATHER (Open-Meteo, no API key) ──
+async function fetchWeather(){
+  try{
+    const r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=35.1796&longitude=129.0756&current=temperature_2m,apparent_temperature,relative_humidity_2m,wind_speed_10m,visibility,weather_code&wind_speed_unit=ms&timezone=Asia%2FSeoul');
+    const d=await r.json();
+    const c=d.current;
+    const wCode=c.weather_code;
+    const icons={0:'☀️',1:'🌤',2:'⛅',3:'☁️',45:'🌫',48:'🌫',51:'🌦',53:'🌦',55:'🌧',61:'🌧',63:'🌧',65:'🌧',71:'🌨',73:'🌨',75:'❄️',80:'🌦',81:'🌧',82:'⛈',85:'🌨',86:'❄️',95:'⛈',96:'⛈',99:'⛈'};
+    const descs={0:'맑음',1:'대체로 맑음',2:'구름 조금',3:'흐림',45:'안개',48:'안개',51:'이슬비',53:'이슬비',55:'이슬비',61:'비',63:'비',65:'강한 비',71:'눈',73:'눈',75:'강한 눈',80:'소나기',81:'소나기',82:'강한 소나기',85:'눈 소나기',86:'강한 눈 소나기',95:'뇌우',96:'뇌우(우박)',99:'강한 뇌우'};
+    document.getElementById('w-icon').textContent=icons[wCode]||'🌡';
+    document.getElementById('w-temp').textContent=Math.round(c.temperature_2m)+'°';
+    document.getElementById('w-feel').textContent=Math.round(c.apparent_temperature)+'°';
+    document.getElementById('w-humid').textContent=c.relative_humidity_2m+'%';
+    document.getElementById('w-wind').textContent=Math.round(c.wind_speed_10m)+' m/s';
+    document.getElementById('w-vis').textContent=c.visibility!=null?Math.round(c.visibility/1000)+' km':'--';
+    document.getElementById('w-desc').textContent=descs[wCode]||'정보 없음';
+    document.getElementById('w-note').textContent='Open-Meteo 기준 · 실시간 업데이트';
+  }catch(e){
+    document.getElementById('w-note').textContent='날씨 정보를 불러올 수 없습니다.';
+  }
+}
+fetchWeather();
+
+// ── MINI CALENDAR ──
+function buildCalendar(){
+  const now=new Date();
+  const y=now.getFullYear(),m=now.getMonth();
+  document.getElementById('cal-title').textContent=`${y}년 ${MONTHS[m]}`;
+  const first=new Date(y,m,1).getDay();
+  const days=new Date(y,m+1,0).getDate();
+  let html='<tr>';
+  ['일','월','화','수','목','금','토'].forEach((d,i)=>{
+    html+=`<th style="padding:0.3rem;font-size:10px;color:${i===0?'var(--red)':i===6?'var(--accent)':'var(--muted)'};font-weight:500">${d}</th>`;
+  });
+  html+='</tr><tr>';
+  for(let i=0;i<first;i++) html+=`<td></td>`;
+  let col=first;
+  for(let d=1;d<=days;d++){
+    const isToday=d===now.getDate();
+    html+=`<td style="padding:0.25rem;"><div style="width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;font-size:11px;${isToday?'background:var(--accent);color:#fff;font-weight:600':'color:var(--fg)'}">${d}</div></td>`;
+    col++;
+    if(col%7===0&&d<days) html+='</tr><tr>';
+  }
+  html+='</tr>';
+  document.getElementById('cal-table').innerHTML=html;
+}
+buildCalendar();
 </script>
 </body>
 </html>
